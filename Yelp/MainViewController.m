@@ -16,36 +16,19 @@ NSString *const kYelpConsumerSecret = @"33QCvh5bIF5jIHR5klQr7RtBDhQ";
 NSString *const kYelpToken = @"uRcRswHFYa1VkDrGV6LAW2F8clGh5JHV";
 NSString *const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
 
-@interface MainViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface MainViewController () <UITableViewDataSource, UITableViewDelegate,
+                                  UISearchBarDelegate>
 
 @property(nonatomic, strong) YelpClient *client;
 @property(weak, nonatomic) IBOutlet UITableView *resultsTableView;
-@property(nonatomic, strong) NSArray *businesses;
+@property(nonatomic, strong) NSMutableArray *businesses;
+@property(nonatomic, strong) NSMutableArray *filteredBusinesses;
+@property(weak, nonatomic) IBOutlet UINavigationItem *navItem;
+@property(weak, nonatomic) IBOutlet UISearchBar *searchBar;
 
 @end
 
 @implementation MainViewController
-
-//- (id)init {
-//  self = [super init];
-//  NSLog(@"init called!");
-//  return self;
-//}
-//
-//- (id)initWithCoder:(NSCoder *)aDecoder {
-//
-//}
-//
-//- (id)initWithNibName:(NSString *)nibNameOrNil
-//               bundle:(NSBundle *)nibBundleOrNil {
-//  self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-//  if (self) {
-//    // You can register for Yelp API keys here:
-//    // http://www.yelp.com/developers/manage_api_keys
-//
-//  }
-//  return self;
-//}
 
 - (void)viewWillAppear:(BOOL)animated {
   [super viewWillAppear:animated];
@@ -53,16 +36,20 @@ NSString *const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
 
 - (void)viewDidLoad {
   [super viewDidLoad];
+  self.searchBar.delegate = self;
+  self.filteredBusinesses = self.businesses;
+
   self.client = [[YelpClient alloc] initWithConsumerKey:kYelpConsumerKey
                                          consumerSecret:kYelpConsumerSecret
                                             accessToken:kYelpToken
                                            accessSecret:kYelpTokenSecret];
 
-  [self.client searchWithTerm:@"Thai"
+  [self.client searchWithTerm:@""
       success:^(AFHTTPRequestOperation *operation, id response) {
         //        NSLog(@"Got response: %@", response);
         self.businesses =
             [Business businessesWithDictionaries:response[@"businesses"]];
+        self.filteredBusinesses = self.businesses;
         [self.resultsTableView reloadData];
         //        NSLog(@"Got businesses: %@", self.businesses);
       }
@@ -77,7 +64,6 @@ NSString *const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
       forCellReuseIdentifier:@"com.yahoo.BusinessCell"];
   self.resultsTableView.estimatedRowHeight = 87;
   self.resultsTableView.rowHeight = UITableViewAutomaticDimension;
-  //  self.resultsTableView.rowHeight = UITableViewAutomaticDimension;
   [self.resultsTableView reloadData];
 }
 
@@ -88,16 +74,39 @@ NSString *const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
 
 - (NSInteger)tableView:(UITableView *)tableView
  numberOfRowsInSection:(NSInteger)section {
-  return self.businesses.count;
+  return self.filteredBusinesses.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   BusinessCell *cell =
       [tableView dequeueReusableCellWithIdentifier:@"com.yahoo.BusinessCell"];
-  Business *business = self.businesses[indexPath.row];
+  Business *business = self.filteredBusinesses[indexPath.row];
   [cell setBusiness:business];
   return cell;
+}
+
+- (void)searchBar:(UISearchBar *)searchBar
+    textDidChange:(NSString *)searchText {
+  NSLog(@"TEXT DID CHANGE!");
+  [self.filteredBusinesses removeAllObjects]; // remove all data that belongs to
+  // previous
+  // search
+  if ([searchText isEqualToString:@""] || searchText == nil) {
+    self.filteredBusinesses = self.businesses;
+    [self.resultsTableView reloadData];
+    return;
+  }
+  [self.client searchWithTerm:searchText
+      success:^(AFHTTPRequestOperation *operation, id response) {
+        self.businesses =
+            [Business businessesWithDictionaries:response[@"businesses"]];
+        self.filteredBusinesses = self.businesses;
+        [self.resultsTableView reloadData];
+      }
+      failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"error: %@", [error description]);
+      }];
 }
 
 @end

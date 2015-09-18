@@ -24,8 +24,10 @@
     float milesPerMeter = 0.000621371;
     self.distance = ([dictionary[@"distance"] integerValue] * milesPerMeter);
     NSDictionary *location = dictionary[@"location"];
-    self.address = [NSString
-        stringWithFormat:@"%@, %@", location[@"address"][0], location[@"city"]];
+    NSString *address =
+        [location[@"address"] count] > 0 ? location[@"address"][0] : @"";
+    self.address =
+        [NSString stringWithFormat:@"%@, %@", address, location[@"city"]];
     self.numReviews = [dictionary[@"review_count"] integerValue];
     self.ratingImageUrl = dictionary[@"rating_img_url"];
     self.name = dictionary[@"name"];
@@ -34,7 +36,7 @@
   return self;
 }
 
-+ (NSArray *)businessesWithDictionaries:(NSArray *)dictionaries {
++ (NSMutableArray *)businessesWithDictionaries:(NSMutableArray *)dictionaries {
   NSMutableArray *businesses = [NSMutableArray array];
   for (NSDictionary *dictionary in dictionaries) {
     Business *business = [[Business alloc] initWithDictionary:dictionary];
