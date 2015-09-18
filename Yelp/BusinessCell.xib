@@ -73,9 +73,11 @@
                     <constraint firstItem="TSK-Rs-m4S" firstAttribute="leading" secondItem="Wm0-qe-EoK" secondAttribute="trailing" constant="8" id="bpU-Xk-uPX"/>
                     <constraint firstItem="KU9-dD-xGq" firstAttribute="top" secondItem="4fi-T8-ZF7" secondAttribute="bottom" constant="1.5" id="c0c-bM-Zm2"/>
                     <constraint firstItem="4fi-T8-ZF7" firstAttribute="top" secondItem="vZb-Lo-igc" secondAttribute="bottom" constant="5" id="cZY-Ww-g5G"/>
+                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Wm0-qe-EoK" secondAttribute="bottom" constant="8" id="d0P-gW-f2S"/>
                     <constraint firstItem="fH9-7f-fmk" firstAttribute="centerY" secondItem="vZb-Lo-igc" secondAttribute="centerY" id="f4d-K2-G41"/>
                     <constraint firstItem="TSK-Rs-m4S" firstAttribute="top" secondItem="Cpq-hK-dKU" secondAttribute="top" constant="8" id="gOB-ab-a5G"/>
                     <constraint firstItem="fJu-iu-c0h" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="TSK-Rs-m4S" secondAttribute="trailing" constant="8" id="h86-yX-1xi"/>
+                    <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="KU9-dD-xGq" secondAttribute="bottom" constant="8" id="wse-2s-wT4"/>
                     <constraint firstItem="Wm0-qe-EoK" firstAttribute="leading" secondItem="Cpq-hK-dKU" secondAttribute="leading" constant="8" id="xDA-lZ-vEU"/>
                     <constraint firstItem="vZb-Lo-igc" firstAttribute="top" secondItem="TSK-Rs-m4S" secondAttribute="bottom" constant="1" id="zuR-IL-3Ka"/>
                 </constraints>

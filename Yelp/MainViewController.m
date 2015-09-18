@@ -75,7 +75,8 @@ NSString *const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
   [self.resultsTableView
                  registerNib:[UINib nibWithNibName:@"BusinessCell" bundle:nil]
       forCellReuseIdentifier:@"com.yahoo.BusinessCell"];
-  self.resultsTableView.rowHeight = 87;
+  self.resultsTableView.estimatedRowHeight = 87;
+  self.resultsTableView.rowHeight = UITableViewAutomaticDimension;
   //  self.resultsTableView.rowHeight = UITableViewAutomaticDimension;
   [self.resultsTableView reloadData];
 }
