@@ -40,8 +40,12 @@
   self.nameLabel.text = self.business.name;
   self.reviewLabel.text = [NSString
       stringWithFormat:@"%ld Reviews", (long)self.business.numReviews];
-  // TODO Finish initializing here then fix table datasource funcs in main view
-  // controller
+  [self.ratingImageView
+      setImageWithURL:[NSURL URLWithString:self.business.ratingImageUrl]];
+  self.distanceLabel.text =
+      [NSString stringWithFormat:@"%ld mi", (long)self.business.distance];
+  self.addressLabel.text = self.business.address;
+  self.categoryLabel.text = self.business.categories;
 }
 
 @end

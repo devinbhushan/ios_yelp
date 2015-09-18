@@ -25,7 +25,7 @@
     self.distance = ([dictionary[@"distance"] integerValue] * milesPerMeter);
     NSDictionary *location = dictionary[@"location"];
     self.address = [NSString
-        stringWithFormat:@"%@,%@", location[@"address"], location[@"city"]];
+        stringWithFormat:@"%@, %@", location[@"address"][0], location[@"city"]];
     self.numReviews = [dictionary[@"review_count"] integerValue];
     self.ratingImageUrl = dictionary[@"rating_img_url"];
     self.name = dictionary[@"name"];
