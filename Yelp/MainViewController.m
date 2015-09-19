@@ -101,7 +101,6 @@ NSString *const kYelpTokenSecret = @"mqtKIxMIR4iBtBPZCmCLEb-Dz3Y";
 
 - (void)searchBar:(UISearchBar *)searchBar
     textDidChange:(NSString *)searchText {
-  NSLog(@"TEXT DID CHANGE!");
   [self.filteredBusinesses removeAllObjects]; // remove all data that belongs to
   // previous
   // search
