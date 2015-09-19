@@ -15,9 +15,15 @@
 @property(nonatomic, readonly) NSDictionary *filters;
 @property(strong, nonatomic) IBOutlet UITableView *filterTableView;
 @property(strong, nonatomic) NSArray *categories;
+@property(strong, nonatomic) NSArray *sorts;
+@property(strong, nonatomic) NSArray *distances;
 @property(strong, nonatomic) NSMutableSet *selectedCategories;
+@property(strong, nonatomic) NSMutableSet *selectedSorts;
+@property(strong, nonatomic) NSMutableSet *selectedDistances;
 
 - (void)setCategories;
+- (void)setSorts;
+- (void)setDistances;
 @end
 
 @implementation FiltersViewController
@@ -27,13 +33,25 @@
   self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
   if (self) {
     [self setCategories];
+    [self setSorts];
+    [self setDistances];
     self.selectedCategories = [NSMutableSet set];
+    self.selectedSorts = [NSMutableSet set];
+    self.selectedDistances = [NSMutableSet set];
   }
   return self;
 }
 
 - (void)setCategories {
   self.categories = [self getCategories];
+}
+
+- (void)setSorts {
+  self.sorts = [self getSorts];
+}
+
+- (void)setDistances {
+  self.distances = [self getDistances];
 }
 
 - (void)viewDidLoad {
@@ -55,7 +73,43 @@
   [self.filterTableView
                  registerNib:[UINib nibWithNibName:@"SwitchCell" bundle:nil]
       forCellReuseIdentifier:@"SwitchCell"];
+  [self.filterTableView reloadData];
 }
+
+- (NSInteger)tableView:(UITableView *)tableView
+ numberOfRowsInSection:(NSInteger)section {
+  switch (section) {
+
+  case 0:
+    return [[self getSorts] count];
+
+  case 1:
+    return [[self getDistances] count];
+
+  case 2:
+    return [[self getCategories] count];
+
+  default:
+    return 0;
+  }
+}
+
+- (NSString *)tableView:(UITableView *)tableView
+titleForHeaderInSection:(NSInteger)section {
+  switch (section) {
+  case 0:
+    return @"Sort By";
+  case 1:
+    return @"Distance";
+  case 2:
+    return @"Category";
+  default:
+    return @"";
+  }
+}
+//- (NSString *)titleForHeaderInSection {
+
+//}
 
 - (void)onCancelButton {
   [self dismissViewControllerAnimated:YES completion:nil];
@@ -72,22 +126,40 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-  return 1;
+  return 3;
 }
 
-- (NSInteger)tableView:(UITableView *)tableView
- numberOfRowsInSection:(NSInteger)section {
-  return self.categories.count;
-}
+//- (NSInteger)tableView:(UITableView *)tableView
+// numberOfRowsInSection:(NSInteger)section {
+//  return self.categories.count;
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath {
   SwitchCell *cell =
       [self.filterTableView dequeueReusableCellWithIdentifier:@"SwitchCell"];
-  cell.titleLabel.text = [self.categories objectAtIndex:indexPath.row][@"name"];
-  cell.on = [self.selectedCategories
-      containsObject:[self.categories objectAtIndex:indexPath.row]];
   cell.delegate = self;
+
+  switch (indexPath.section) {
+  case 0: {
+    cell.titleLabel.text = self.sorts[indexPath.row][@"name"];
+    cell.on = [self.selectedSorts
+        containsObject:[self.sorts objectAtIndex:indexPath.row]];
+    cell.delegate = self;
+  }
+  case 1: {
+    cell.titleLabel.text = self.distances[indexPath.row][@"name"];
+    cell.on = [self.selectedDistances
+        containsObject:[self.distances objectAtIndex:indexPath.row]];
+    cell.delegate = self;
+  }
+  case 2: {
+    cell.titleLabel.text = self.categories[indexPath.row][@"name"];
+    cell.on = [self.selectedCategories
+        containsObject:[self.categories objectAtIndex:indexPath.row]];
+    cell.delegate = self;
+  }
+  }
 
   return cell;
 }
@@ -95,12 +167,33 @@
 - (void)switchCell:(SwitchCell *)cell didUpdateValue:(BOOL)value {
   NSIndexPath *indexPath = [self.filterTableView indexPathForCell:cell];
 
-  if (value) {
-    [self.selectedCategories
-        addObject:[self.categories objectAtIndex:indexPath.row]];
-  } else {
-    [self.selectedCategories
-        removeObject:[self.categories objectAtIndex:indexPath.row]];
+  switch (indexPath.section) {
+  case 0: {
+    if (value) {
+      [self.selectedSorts addObject:[self.sorts objectAtIndex:indexPath.row]];
+    } else {
+      [self.selectedSorts
+          removeObject:[self.sorts objectAtIndex:indexPath.row]];
+    }
+  }
+  case 1: {
+    if (value) {
+      [self.selectedDistances
+          addObject:[self.distances objectAtIndex:indexPath.row]];
+    } else {
+      [self.selectedDistances
+          removeObject:[self.distances objectAtIndex:indexPath.row]];
+    }
+  }
+  case 2: {
+    if (value) {
+      [self.selectedCategories
+          addObject:[self.categories objectAtIndex:indexPath.row]];
+    } else {
+      [self.selectedCategories
+          removeObject:[self.categories objectAtIndex:indexPath.row]];
+    }
+  }
   }
   //  NSDictionary *category = [self.categories objectAtIndex:indexPath.row];
   //  cell.titleLabel = category[@"name"];
